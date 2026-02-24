@@ -25,6 +25,16 @@ class TradeCreate(BaseModel):
     opened_at: Optional[datetime] = None
     closed_at: Optional[datetime] = None
 
+class TradeUpdate(BaseModel):
+    symbol: Optional[str] = None
+    side: Optional[str] = None
+    entry_price: Optional[float] = None
+    exit_price: Optional[float] = None
+    quantity: Optional[float] = None
+    notes: Optional[str] = None
+    opened_at: Optional[datetime] = None
+    closed_at: Optional[datetime] = None
+
 Base.metadata.create_all(bind = engine)
 app = FastAPI()
 
@@ -115,4 +125,53 @@ def get_trades(
 ):
     trades = db.query(Trade).filter(Trade.user_id == current_user.id).all()
     return trades
+
+@app.delete("/trades/{trade_id}")
+def delete_trade(
+    trade_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    trade = db.query(Trade).filter(Trade.id == trade_id).first()
+    if not trade:
+        raise HTTPException(status_code = 404, detail="Trade not found")
+    
+    if trade.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    db.delete(trade)
+    db.commit()
+    return {"message": "Trade deleted"}
+
+@app.patch("/trades/{trade_id}")
+def update_trade(
+    trade_id: int,
+    updates: TradeUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    trade = db.query(Trade).filter(Trade.id == trade_id).first()
+    if not trade:
+        raise HTTPException(status_code = 404, detail="Trade not found")
+    
+    if trade.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    data = updates.model_dump(exclude_unset=True)
+
+    if "side" in data:
+        s = data["side"].lower()
+        if s not in ("buy", "sell"):
+            raise HTTPException(status_code=400, detail="side must be 'buy' or 'sell'")
+    data["side"] = s
+
+    if "symbol" in data:
+        data["symbol"] = data["symbol"].upper()
+    
+    for k, v in data.items():
+        setattr(trade, k, v)
+    
+    db.commit()
+    db.refresh(trade)
+    return trade
 
