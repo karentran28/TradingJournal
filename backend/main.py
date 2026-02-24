@@ -8,10 +8,22 @@ from app.utils.jwt import create_access_token
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordRequestForm
 from app.utils.auth import get_current_user
-
+from app.models.trade import Trade
+from typing import Optional
+from datetime import datetime
 class UserCreate(BaseModel):
     email: str
     password: str
+
+class TradeCreate(BaseModel):
+    symbol: str
+    side: str
+    entry_price: float
+    exit_price: Optional[float] = None
+    quantity: Optional[float] = None
+    notes: Optional[str] = None
+    opened_at: Optional[datetime] = None
+    closed_at: Optional[datetime] = None
 
 Base.metadata.create_all(bind = engine)
 app = FastAPI()
@@ -57,4 +69,50 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/me")
 def read_me(user = Depends(get_current_user)):
     return {"email": user.email}
+
+@app.post("/trades")
+def create_trade(
+    trade: TradeCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    side = trade.side.lower()
+    if side not in ("buy", "sell"):
+        raise HTTPException(status_code=400, detail="side must be 'buy' or 'sell'")
+    
+    new_trade = Trade(
+        user_id = current_user.id,
+        symbol=trade.symbol.upper(),
+        side=side,
+        entry_price=trade.entry_price,
+        exit_price=trade.exit_price,
+        quantity=trade.quantity,
+        notes=trade.notes,
+        opened_at = trade.opened_at,
+        closed_at= trade.closed_at,
+    )
+    db.add(new_trade)
+    db.commit()
+    db.refresh(new_trade)
+
+    return {
+        "id": new_trade.id,
+        "user_id": new_trade.user_id,
+        "symbol": new_trade.symbol,
+        "side": new_trade.side,
+        "entry_price": new_trade.entry_price,
+        "exit_price": new_trade.exit_price,
+        "quantity": new_trade.quantity,
+        "notes": new_trade.notes,
+        "opened_at": new_trade.opened_at,
+        "closed_at": new_trade.closed_at,
+    }
+    
+@app.get("/trades")
+def get_trades(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    trades = db.query(Trade).filter(Trade.user_id == current_user.id).all()
+    return trades
 
