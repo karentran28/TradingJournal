@@ -10,6 +10,7 @@ from app.utils.jwt import SECRET_KEY, ALGORITHM
 # tells FastAPI where to look for the token in the request (Authorization Header)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
 
+# token from header gets passed in
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
