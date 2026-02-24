@@ -6,6 +6,8 @@ from app.database.session import get_db
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt import create_access_token
 from pydantic import BaseModel
+from fastapi.security import OAuth2PasswordRequestForm
+from app.utils.auth import get_current_user
 
 class UserCreate(BaseModel):
     email: str
@@ -41,11 +43,18 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
 
 # authenticate users and return JWT token
 @app.post("/login")
-def login(user: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if not existing_user or not verify_password(user.password, existing_user.hashed_password):
-        raise HTTPException(status_code = 401, detail="Invalid credentials")
-    
-    token = create_access_token({"sub": existing_user.email})
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+
+    user = db.query(User).filter(User.email == form_data.username).first()
+
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"sub": user.email})
+
     return {"access_token": token, "token_type": "bearer"}
+
+@app.get("/me")
+def read_me(user = Depends(get_current_user)):
+    return {"email": user.email}
 
