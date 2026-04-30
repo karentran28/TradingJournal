@@ -7,7 +7,6 @@ import Reports from "./pages/Reports";
 import Trades from "./pages/Trades";
 import Strategies from "./pages/Strategies";
 import Journal from "./pages/Journal";
-import Notebook from "./pages/Notebook";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
@@ -30,7 +29,6 @@ function App() {
                 <Route path="/trades"      element={<Protected><Trades /></Protected>} />
                 <Route path="/strategies" element={<Protected><Strategies /></Protected>} />
                 <Route path="/journal"    element={<Protected><Journal /></Protected>} />
-                <Route path="/notebook"  element={<Protected><Notebook /></Protected>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </BrowserRouter>

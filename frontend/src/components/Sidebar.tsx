@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard, CalendarDays, BarChart2,
-    ListOrdered, BookOpen, NotebookPen, Plus, LogOut, Lightbulb,
+    ListOrdered, BookOpen, Plus, LogOut, Lightbulb,
 } from "lucide-react";
 import { clearToken } from "../auth/token";
 
@@ -12,7 +12,6 @@ const navItems = [
     { to: "/trades",     label: "Trades",     icon: ListOrdered },
     { to: "/strategies", label: "Strategies", icon: Lightbulb },
     { to: "/journal",    label: "Journal",    icon: BookOpen },
-    { to: "/notebook",   label: "Notebook",   icon: NotebookPen },
 ];
 
 export default function Sidebar() {
