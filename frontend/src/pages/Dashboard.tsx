@@ -346,7 +346,7 @@ export default function Dashboard() {
     const pnlColor = stats.total_pnl >= 0 ? GREEN : RED;
 
     return (
-        <div style={{ maxWidth: 1100 }}>
+        <div style={{ width: "100%" }}>
             {/* Page header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                 <h1 style={{ color: "var(--text)", fontSize: 18, fontWeight: 700, margin: 0 }}>Overview</h1>

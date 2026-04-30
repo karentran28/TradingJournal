@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Calendar from "./pages/Calendar";
 import Reports from "./pages/Reports";
 import Trades from "./pages/Trades";
+import Strategies from "./pages/Strategies";
 import Journal from "./pages/Journal";
 import Notebook from "./pages/Notebook";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -26,8 +27,9 @@ function App() {
                 <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
                 <Route path="/calendar"  element={<Protected><Calendar /></Protected>} />
                 <Route path="/reports"   element={<Protected><Reports /></Protected>} />
-                <Route path="/trades"    element={<Protected><Trades /></Protected>} />
-                <Route path="/journal"   element={<Protected><Journal /></Protected>} />
+                <Route path="/trades"      element={<Protected><Trades /></Protected>} />
+                <Route path="/strategies" element={<Protected><Strategies /></Protected>} />
+                <Route path="/journal"    element={<Protected><Journal /></Protected>} />
                 <Route path="/notebook"  element={<Protected><Notebook /></Protected>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>

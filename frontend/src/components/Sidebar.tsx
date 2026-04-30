@@ -1,17 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard, CalendarDays, BarChart2,
-    ListOrdered, BookOpen, NotebookPen, Plus, LogOut,
+    ListOrdered, BookOpen, NotebookPen, Plus, LogOut, Lightbulb,
 } from "lucide-react";
 import { clearToken } from "../auth/token";
 
 const navItems = [
-    { to: "/dashboard", label: "Dashboard",  icon: LayoutDashboard },
-    { to: "/calendar",  label: "Calendar",   icon: CalendarDays },
-    { to: "/reports",   label: "Reports",    icon: BarChart2 },
-    { to: "/trades",    label: "Trades",     icon: ListOrdered },
-    { to: "/journal",   label: "Journal",    icon: BookOpen },
-    { to: "/notebook",  label: "Notebook",   icon: NotebookPen },
+    { to: "/dashboard",  label: "Dashboard",  icon: LayoutDashboard },
+    { to: "/calendar",   label: "Calendar",   icon: CalendarDays },
+    { to: "/reports",    label: "Reports",    icon: BarChart2 },
+    { to: "/trades",     label: "Trades",     icon: ListOrdered },
+    { to: "/strategies", label: "Strategies", icon: Lightbulb },
+    { to: "/journal",    label: "Journal",    icon: BookOpen },
+    { to: "/notebook",   label: "Notebook",   icon: NotebookPen },
 ];
 
 export default function Sidebar() {
